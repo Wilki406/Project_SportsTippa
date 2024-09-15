@@ -1,4 +1,4 @@
-# SportsTippa
+# Tippa
 A Sports betting application with real sports data.
 
 ## To-Do List

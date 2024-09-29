@@ -9,6 +9,7 @@ from argon2 import PasswordHasher
 import Database
 
 data = Database.getData()
+Database.startDB()
 
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
@@ -81,7 +82,7 @@ class SignIn(customtkinter.CTk):
         self.SIerrormessage = CTkLabel(self.loginframe, text="", text_color="red")
         self.SIerrormessage.grid(column=1, row=4)
 
-        self.loginbutton = CTkButton(self.loginframe, text='Login',
+        self.loginbutton = CTkButton(self.loginframe, text='Login', command=self.AttempSignin,
                                  width=300,
                                  fg_color="#32a852",
                                  border_width=0,
@@ -103,7 +104,7 @@ class SignIn(customtkinter.CTk):
                                    text="Tippa",
                                    text_color="White",
                                    font=("Copperplate Gothic Bold", 60))
-        
+
         self.titlereg.grid(column=1, row=1, padx=400, pady=(30, 60))
 
         self.nameentry = CTkEntry(self.regframe,
@@ -143,7 +144,10 @@ class SignIn(customtkinter.CTk):
         self.regpasswordentry2.grid(column=1, row=5, padx=400, pady=(10, 30))
 
         self.backbuttonreg = CTkButton(self.regframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
-        self.backbuttonreg.grid(column=1, row=6, pady=(0, 40))
+        self.backbuttonreg.grid(column=1, row=6, pady=(0, 40), padx=(0,160))
+
+        self.buttonreg = CTkButton(self.regframe, text='Register', command=self.AttemptRegister, fg_color="#009e99")
+        self.buttonreg.grid(column=1, row=6, pady=(0, 40), padx=(160,0))
 
     def initForgotPage(self):
         self.forframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
@@ -161,6 +165,7 @@ class SignIn(customtkinter.CTk):
 
     def goSigninPage(self):
         self.showFrame(self.loginframe)
+        self.getUsernames()
         self.SIerrormessage.configure(text="")
         return
 
@@ -171,35 +176,62 @@ class SignIn(customtkinter.CTk):
         self.usernames.clear()
         for i in data:
             self.usernames.append(i[0])
-
-
+        print(self.usernames)
 
     def AttempSignin(self):
-        self.getUsernames()
+        if self.passwordentry.get() == "" and self.userentry.get() == "":
+            self.SIerrormessage.configure(text="Enter your details or register below")
+        elif self.passwordentry.get() == "":
+            self.SIerrormessage.configure(text="Please enter your Password")
+        elif self.userentry.get() == "":
+            self.SIerrormessage.configure(text="Please enter your Username")
+
 
         for i in data:
-            if i[0] == self.userentry.get() and i[1] == self.passwordentry:
-                # Log in
+            if i[0] == self.userentry.get() and i[1] == self.passwordentry.get():
                 self.current_user_username = self.userentry.get()
-
+                #Log in
                 print("Yippee")
-
-
-
+            else:
+                print("bad data")
 
     def goRegisterPage(self):
         self.showFrame(self.regframe)
         return
 
+    def checkSpace(fullname):
+        count = 0
+        for i in range(0, len(fullname)):
+            if fullname[i] == " ":
+                count += 1
+        return count
+
     def AttemptRegister(self):
         self.getUsernames()
+        username = self.reguserentry.get().strip()
+        password = self.regpasswordentry.get()
+        password_confirm = self.regpasswordentry2.get()
+        fullname = self.nameentry.get().strip()
 
-        if self.userentry.get() not in self.usernames:
-            username = self.reguserentry.get()
-            if self.regpasswordentry.get() == self.regpasswordentry2:
-                password = self.regpasswordentry2.get()
+        if not username or not password or not password_confirm or not fullname:
+            print("All fields must be filled")
 
-                #Database.insertRow(f"{username},{},{},{},")
+        if username in self.usernames:
+            print("Username already exists")
+
+        if password != password_confirm:
+            print("Passwords do not match")
+
+        name_parts = fullname.split()
+        if len(name_parts) < 2:
+            print("Please enter both first and last name")
+
+        fname = name_parts[0]
+        lname = " ".join(name_parts[1:])
+
+        Database.insertRow(username,password,fname,lname)
+        Database.commitDB()
+        print("Registration successful")
 
     def goForgotPage(self):
         if self.userentry.get() == "":
@@ -209,7 +241,7 @@ class SignIn(customtkinter.CTk):
             self.showFrame(self.forframe)
             return
 
-
-
 app = SignIn()
 app.mainloop()
+
+Database.startDB()

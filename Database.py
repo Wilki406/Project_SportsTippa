@@ -5,6 +5,10 @@ c = conn.cursor()
 
 # null, integer, real, text, blob
 
+def startDB():
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
 def createTable():
     c.execute("""CREATE TABLE userdata (
             username text,
@@ -23,11 +27,10 @@ def getData():
     c.execute("SELECT * FROM userdata")
     return c.fetchall()
 
+def finDB():
+    conn.commit()
+    conn.close()
+    return
 
-#createTable()
-#deleteTable()
-#insertRow("wilki","1234","ben","wilkinson")
-
-conn.commit()
-
-conn.close()
+def commitDB():
+    conn.commit()

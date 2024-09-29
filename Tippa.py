@@ -1,6 +1,5 @@
-import csv
+# Programmer: Benjamin D Wilkinson
 import os
-
 from customtkinter import *
 import customtkinter
 from screeninfo import get_monitors
@@ -185,7 +184,6 @@ class SignIn(customtkinter.CTk):
             self.SIerrormessage.configure(text="Please enter your Password")
         elif self.userentry.get() == "":
             self.SIerrormessage.configure(text="Please enter your Username")
-
 
         for i in data:
             if i[0] == self.userentry.get() and i[1] == self.passwordentry.get():

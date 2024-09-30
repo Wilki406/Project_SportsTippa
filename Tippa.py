@@ -104,7 +104,10 @@ class SignIn(customtkinter.CTk):
                                    text_color="White",
                                    font=("Copperplate Gothic Bold", 60))
 
-        self.titlereg.grid(column=1, row=1, padx=400, pady=(30, 60))
+        self.titlereg.grid(column=1, row=1, padx=400, pady=(30, 20))
+
+        self.REGerrormessage = CTkLabel(self.regframe, text="", text_color="red")
+        self.REGerrormessage.grid(column=1, row=2)
 
         self.nameentry = CTkEntry(self.regframe,
                                   placeholder_text="Fullname",
@@ -113,7 +116,7 @@ class SignIn(customtkinter.CTk):
                                   border_width=2,
                                   corner_radius=10)
 
-        self.nameentry.grid(column=1, row=2, padx=400, pady=(10, 10))
+        self.nameentry.grid(column=1, row=3, padx=400, pady=(10, 10))
 
         self.reguserentry = CTkEntry(self.regframe,
                                   placeholder_text="Username",
@@ -122,7 +125,7 @@ class SignIn(customtkinter.CTk):
                                   border_width=2,
                                   corner_radius=10)
 
-        self.reguserentry.grid(column=1, row=3, padx=400, pady=(10, 10))
+        self.reguserentry.grid(column=1, row=4, padx=400, pady=(10, 10))
 
         self.regpasswordentry = CTkEntry(self.regframe, show="*",
                                       placeholder_text="Password",
@@ -131,7 +134,7 @@ class SignIn(customtkinter.CTk):
                                       border_width=2,
                                       corner_radius=10, )
 
-        self.regpasswordentry.grid(column=1, row=4, padx=400, pady=(10, 10))
+        self.regpasswordentry.grid(column=1, row=5, padx=400, pady=(10, 10))
 
         self.regpasswordentry2 = CTkEntry(self.regframe, show="*",
                                       placeholder_text="Repeat Password",
@@ -140,13 +143,13 @@ class SignIn(customtkinter.CTk):
                                       border_width=2,
                                       corner_radius=10, )
 
-        self.regpasswordentry2.grid(column=1, row=5, padx=400, pady=(10, 30))
+        self.regpasswordentry2.grid(column=1, row=6, padx=400, pady=(10, 30))
 
         self.backbuttonreg = CTkButton(self.regframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
-        self.backbuttonreg.grid(column=1, row=6, pady=(0, 40), padx=(0,160))
+        self.backbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(0,160))
 
         self.buttonreg = CTkButton(self.regframe, text='Register', command=self.AttemptRegister, fg_color="#009e99")
-        self.buttonreg.grid(column=1, row=6, pady=(0, 40), padx=(160,0))
+        self.buttonreg.grid(column=1, row=7, pady=(0, 55), padx=(160,0))
 
     def initForgotPage(self):
         self.forframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
@@ -166,6 +169,7 @@ class SignIn(customtkinter.CTk):
         self.showFrame(self.loginframe)
         self.getUsernames()
         self.SIerrormessage.configure(text="")
+        self.REGerrormessage.configure(text="")
         return
 
     def getUsernames(self):
@@ -197,6 +201,12 @@ class SignIn(customtkinter.CTk):
         self.showFrame(self.regframe)
         return
 
+    def clearRegBoxes(self):
+        self.nameentry.delete(0, 'end')
+        self.reguserentry.delete(0, 'end')
+        self.regpasswordentry2.delete(0, 'end')
+        self.regpasswordentry.delete(0, 'end')
+
     def checkSpace(fullname):
         count = 0
         for i in range(0, len(fullname)):
@@ -212,17 +222,21 @@ class SignIn(customtkinter.CTk):
         fullname = self.nameentry.get().strip()
 
         if not username or not password or not password_confirm or not fullname:
-            print("All fields must be filled")
+            self.REGerrormessage.configure(text="Enter your details")
+            return
 
         if username in self.usernames:
-            print("Username already exists")
+            self.REGerrormessage.configure(text="That username already exists")
+            return
 
         if password != password_confirm:
-            print("Passwords do not match")
+            self.REGerrormessage.configure(text="Passwords do not match")
+            return
 
         name_parts = fullname.split()
         if len(name_parts) < 2:
-            print("Please enter both first and last name")
+            self.REGerrormessage.configure(text="Please enter both first and last name")
+            return
 
         fname = name_parts[0]
         lname = " ".join(name_parts[1:])
@@ -230,6 +244,10 @@ class SignIn(customtkinter.CTk):
         Database.insertRow(username,password,fname,lname)
         Database.commitDB()
         print("Registration successful")
+        self.clearRegBoxes()
+        self.REGerrormessage.configure(text="")
+        self.goSigninPage()
+
 
     def goForgotPage(self):
         if self.userentry.get() == "":

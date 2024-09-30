@@ -35,11 +35,12 @@ class SignIn(customtkinter.CTk):
         self.initSigninPage()
         self.initRegisterPage()
         self.initForgotPage()
+        self.initSQPage()
 
         self.goSigninPage()
 
     def showFrame(self, frame):
-        for f in [self.loginframe, self.regframe, self.forframe]:
+        for f in [self.loginframe, self.regframe, self.forframe, self.SQframe]:
             f.grid_remove()
         frame.grid(column=0,row=0, padx=(50), pady=(50), sticky='nsew')
 
@@ -148,8 +149,32 @@ class SignIn(customtkinter.CTk):
         self.backbuttonreg = CTkButton(self.regframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
         self.backbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(0,160))
 
-        self.buttonreg = CTkButton(self.regframe, text='Register', command=self.AttemptRegister, fg_color="#009e99")
+        self.buttonreg = CTkButton(self.regframe, text='Continue', command=self.AttemptRegister, fg_color="#009e99")
         self.buttonreg.grid(column=1, row=7, pady=(0, 55), padx=(160,0))
+
+    def initSQPage(self):
+        self.SQframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
+                                 border_color="#09d8eb", bg_color="#292e2e", border_width=2)
+        self.SQframe.grid(column=0, row=0, padx=20, pady=20)
+
+        self.titleSQ = CTkLabel(self.SQframe,
+                                 text="Tippa",
+                                 text_color="White",
+                                 font=("Copperplate Gothic Bold", 60))
+        self.titleSQ.grid(column=1, row=1, padx=400, pady=(30, 60))
+
+        self.SQerrormessage = CTkLabel(self.SQframe, text="", text_color="red")
+        self.SQerrormessage.grid(column=1, row=2)
+
+        self.combo1 = CTkComboBox(self.SQframe)
+        self.combo1.grid(column=1, row=3)
+
+
+        self.backbuttonreg = CTkButton(self.SQframe, text='Back', command=self.goRegisterPage, fg_color="#8a0000")
+        self.backbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(0, 160))
+
+        self.buttonreg = CTkButton(self.SQframe, text='Register', command=self.AttemptRegister, fg_color="#009e99")
+        self.buttonreg.grid(column=1, row=7, pady=(0, 55), padx=(160, 0))
 
     def initForgotPage(self):
         self.forframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
@@ -216,37 +241,39 @@ class SignIn(customtkinter.CTk):
 
     def AttemptRegister(self):
         self.getUsernames()
-        username = self.reguserentry.get().strip()
-        password = self.regpasswordentry.get()
-        password_confirm = self.regpasswordentry2.get()
-        fullname = self.nameentry.get().strip()
+        self.username = self.reguserentry.get().strip()
+        self.password = self.regpasswordentry.get()
+        self.password_confirm = self.regpasswordentry2.get()
+        self.fullname = self.nameentry.get().strip()
 
-        if not username or not password or not password_confirm or not fullname:
+        if not self.username or not self.password or not self.password_confirm or not self.fullname:
             self.REGerrormessage.configure(text="Enter your details")
             return
 
-        if username in self.usernames:
+        if self.username in self.usernames:
             self.REGerrormessage.configure(text="That username already exists")
             return
 
-        if password != password_confirm:
+        if self.password != self.password_confirm:
             self.REGerrormessage.configure(text="Passwords do not match")
             return
 
-        name_parts = fullname.split()
+        name_parts = self.fullname.split()
         if len(name_parts) < 2:
             self.REGerrormessage.configure(text="Please enter both first and last name")
             return
 
-        fname = name_parts[0]
-        lname = " ".join(name_parts[1:])
+        self.fname = name_parts[0]
+        self.lname = " ".join(name_parts[1:])
 
-        Database.insertRow(username,password,fname,lname)
-        Database.commitDB()
-        print("Registration successful")
-        self.clearRegBoxes()
-        self.REGerrormessage.configure(text="")
-        self.goSigninPage()
+        self.goSQPage()
+        # I NEED THIS TO BE AT THE NEW PLACE
+        # Database.insertRow(username,password,fname,lname)
+        # Database.commitDB()
+        # print("Registration successful")
+        # self.clearRegBoxes()
+        # self.REGerrormessage.configure(text="")
+        # self.goSigninPage()
 
 
     def goForgotPage(self):
@@ -254,8 +281,13 @@ class SignIn(customtkinter.CTk):
             self.SIerrormessage.configure(text="Please enter Username")
             return
         else:
-            self.showFrame(self.forframe)
-            return
+            if self.userentry.get() in self.usernames:
+                self.showFrame(self.forframe)
+            else:
+                self.SIerrormessage.configure(text="Enter enter Username")
+
+    def goSQPage(self):
+        self.showFrame(self.SQframe)
 
 app = SignIn()
 app.mainloop()

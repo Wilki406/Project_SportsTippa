@@ -25,6 +25,16 @@ class SignIn(customtkinter.CTk):
         self.mainframe.grid(column=0, row=0, sticky='nsew')
 
         self.usernames = []
+        self.secretQuestions = ["Select Question","What is the name of your first pet?",
+                                "What is the name of the street you grew up on?",
+                                "What was the model of your first car?",
+                                "What was your childhood nickname?",
+                                "What is your mother’s maiden name?",
+                                "What is your father’s middle name?",
+                                "What is the title of your favorite book?",
+                                "What is the name of your favorite childhood friend?",
+                                "What city were you born in?",
+                                "What is the name of the first school you attended?"]
 
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
@@ -105,7 +115,7 @@ class SignIn(customtkinter.CTk):
                                    text_color="White",
                                    font=("Copperplate Gothic Bold", 60))
 
-        self.titlereg.grid(column=1, row=1, padx=400, pady=(30, 20))
+        self.titlereg.grid(column=1, row=1, padx=400, pady=(30, 10))
 
         self.REGerrormessage = CTkLabel(self.regframe, text="", text_color="red")
         self.REGerrormessage.grid(column=1, row=2)
@@ -161,20 +171,41 @@ class SignIn(customtkinter.CTk):
                                  text="Tippa",
                                  text_color="White",
                                  font=("Copperplate Gothic Bold", 60))
-        self.titleSQ.grid(column=1, row=1, padx=400, pady=(30, 60))
+        self.titleSQ.grid(column=1, row=1, padx=430, pady=(30, 5))
 
-        self.SQerrormessage = CTkLabel(self.SQframe, text="", text_color="red")
+        self.SQerrormessage = CTkLabel(self.SQframe, text="error", text_color="red")
         self.SQerrormessage.grid(column=1, row=2)
 
-        self.combo1 = CTkComboBox(self.SQframe)
-        self.combo1.grid(column=1, row=3)
+        self.SQ1l = CTkLabel(self.SQframe,
+                                text="Question 1: ",
+                                text_color="White")
+
+        self.SQ1l.grid(column=1, row=3, padx=400, pady=(5, 10))
+
+        self.combo1 = CTkComboBox(self.SQframe, values=self.secretQuestions, width=370)
+        self.combo1.grid(column=1, row=4)
+
+        self.entry1 = CTkEntry(self.SQframe, width=250, placeholder_text="Answer")
+        self.entry1.grid(column=1, row=5, pady=(10, 0))
+
+        self.SQ2l = CTkLabel(self.SQframe,
+                             text="Question 2: ",
+                             text_color="White")
+
+        self.SQ2l.grid(column=1, row=6, padx=400, pady=(10, 10))
+
+        self.combo2 = CTkComboBox(self.SQframe, values=self.secretQuestions, width=370)
+        self.combo2.grid(column=1, row=7, pady=(0, 10))
+
+        self.entry2 = CTkEntry(self.SQframe, width=250, placeholder_text="Answer")
+        self.entry2.grid(column=1, row=8,pady=(0, 30))
 
 
         self.backbuttonreg = CTkButton(self.SQframe, text='Back', command=self.goRegisterPage, fg_color="#8a0000")
-        self.backbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(0, 160))
+        self.backbuttonreg.grid(column=1, row=9, pady=(0, 55), padx=(0, 160))
 
         self.buttonreg = CTkButton(self.SQframe, text='Register', command=self.AttemptRegister, fg_color="#009e99")
-        self.buttonreg.grid(column=1, row=7, pady=(0, 55), padx=(160, 0))
+        self.buttonreg.grid(column=1, row=9, pady=(0, 55), padx=(160, 0))
 
     def initForgotPage(self):
         self.forframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
@@ -267,8 +298,9 @@ class SignIn(customtkinter.CTk):
         self.lname = " ".join(name_parts[1:])
 
         self.goSQPage()
+
         # I NEED THIS TO BE AT THE NEW PLACE
-        # Database.insertRow(username,password,fname,lname)
+        # Database.insertRow(username,password,fname,lname, )
         # Database.commitDB()
         # print("Registration successful")
         # self.clearRegBoxes()

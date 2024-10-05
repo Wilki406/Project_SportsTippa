@@ -182,7 +182,7 @@ class SignIn(customtkinter.CTk):
 
         self.SQ1l.grid(column=1, row=3, padx=400, pady=(5, 10))
 
-        self.combo1 = CTkComboBox(self.SQframe, values=self.secretQuestions, width=370)
+        self.combo1 = CTkOptionMenu(self.SQframe, values=self.secretQuestions, width=370, command=self.changeSecretQuestion1)
         self.combo1.grid(column=1, row=4)
 
         self.entry1 = CTkEntry(self.SQframe, width=250, placeholder_text="Answer")
@@ -194,7 +194,7 @@ class SignIn(customtkinter.CTk):
 
         self.SQ2l.grid(column=1, row=6, padx=400, pady=(10, 10))
 
-        self.combo2 = CTkComboBox(self.SQframe, values=self.secretQuestions, width=370)
+        self.combo2 = CTkOptionMenu(self.SQframe, values=self.secretQuestions, width=370, command=self.changeSecretQuestion2)
         self.combo2.grid(column=1, row=7, pady=(0, 10))
 
         self.entry2 = CTkEntry(self.SQframe, width=250, placeholder_text="Answer")
@@ -206,6 +206,21 @@ class SignIn(customtkinter.CTk):
 
         self.buttonreg = CTkButton(self.SQframe, text='Register', command=self.AttemptRegister, fg_color="#009e99")
         self.buttonreg.grid(column=1, row=9, pady=(0, 55), padx=(160, 0))
+
+    def changeSecretQuestion1(self, inputQuestion):
+        newList = self.secretQuestions.copy()
+        for i, question in enumerate(self.secretQuestions):
+            if inputQuestion == question:
+                newList.pop(i)
+        self.combo2.configure(values=newList)
+
+    def changeSecretQuestion2(self, inputQuestion):
+        newList = self.secretQuestions.copy()
+        for i, question in enumerate(self.secretQuestions):
+            if inputQuestion == question:
+                newList.pop(i)
+        self.combo1.configure(values=newList)
+
 
     def initForgotPage(self):
         self.forframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
@@ -221,6 +236,7 @@ class SignIn(customtkinter.CTk):
         self.backbuttonfor = CTkButton(self.forframe, text='Back', command=self.goSigninPage)
         self.backbuttonfor.grid(column=1, row=2)
 
+
     def goSigninPage(self):
         self.showFrame(self.loginframe)
         self.getUsernames()
@@ -233,8 +249,10 @@ class SignIn(customtkinter.CTk):
         data = Database.getData()
 
         self.usernames.clear()
-        for i in data:
-            self.usernames.append(i[0])
+        print(data)
+        # self.usernames = [username[0] for username in data]
+        for row in data:
+            self.usernames.append(row[0])
         print(self.usernames)
 
     def AttempSignin(self):

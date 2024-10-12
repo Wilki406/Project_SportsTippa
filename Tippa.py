@@ -159,7 +159,7 @@ class SignIn(customtkinter.CTk):
         self.backbuttonreg = CTkButton(self.regframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
         self.backbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(0,160))
 
-        self.buttonreg = CTkButton(self.regframe, text='Continue', command=self.AttemptRegister, fg_color="#009e99")
+        self.buttonreg = CTkButton(self.regframe, text='Continue', command=self.NextRegister, fg_color="#009e99")
         self.buttonreg.grid(column=1, row=7, pady=(0, 55), padx=(160,0))
 
     def initSQPage(self):
@@ -289,6 +289,22 @@ class SignIn(customtkinter.CTk):
         return count
 
     def AttemptRegister(self):
+
+        combobox2answer = self.combo2
+        combobox1answer = self.combo1
+
+        if combobox1answer != combobox2answer:
+
+
+            Database.insertRow(self.username, self.password, self.fname, self.lname, )
+            Database.commitDB()
+            print("Registration successful")
+            self.clearRegBoxes()
+            self.REGerrormessage.configure(text="")
+            self.goSigninPage()
+
+
+    def NextRegister(self):
         self.getUsernames()
         self.username = self.reguserentry.get().strip()
         self.password = self.regpasswordentry.get()

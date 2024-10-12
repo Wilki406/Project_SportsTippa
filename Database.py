@@ -13,6 +13,14 @@ c.execute("""CREATE TABLE IF NOT EXISTS userdata (
         secque text
     )""")
 
+c.execute("""CREATE TABLE IF NOT EXISTS usersecretdata (
+        username text NOT NULL UNIQUE,
+        password text,
+        first_name text,
+        last_name text,
+        secque text
+    )""")
+
 # null, integer, real, text, blob
 
 def startDB():

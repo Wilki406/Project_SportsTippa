@@ -290,19 +290,28 @@ class SignIn(customtkinter.CTk):
 
     def AttemptRegister(self):
 
-        combobox2answer = self.combo2
-        combobox1answer = self.combo1
+        ph = PasswordHasher()
+        secque2 = self.combo2.get()
+        secque1 = self.combo1.get()
 
-        if combobox1answer != combobox2answer:
+        if self.entry2.get() and self.entry1.get() != "":
+            secqueans2 = ph.hash(self.entry2.get())
+            secqueans1 = ph.hash(self.entry1.get())
+
+            if secque2 != secque1:
+
+                hashedpass = ph.hash(self.password)
 
 
-            Database.insertRow(self.username, self.password, self.fname, self.lname, )
-            Database.commitDB()
-            print("Registration successful")
-            self.clearRegBoxes()
-            self.REGerrormessage.configure(text="")
-            self.goSigninPage()
+                Database.createUser(self.username, hashedpass, self.fname, self.lname)
+                Database.createUserSQ(secque1, secqueans1, secque2, secqueans2)
+                Database.commitDB()
+                print("Registration successful")
 
+                self.clearRegBoxes()
+                self.REGerrormessage.configure(text="")
+                self.goSigninPage()
+                return
 
     def NextRegister(self):
         self.getUsernames()
@@ -330,16 +339,7 @@ class SignIn(customtkinter.CTk):
 
         self.fname = name_parts[0]
         self.lname = " ".join(name_parts[1:])
-
         self.goSQPage()
-
-        # I NEED THIS TO BE AT THE NEW PLACE
-        # Database.insertRow(username,password,fname,lname, )
-        # Database.commitDB()
-        # print("Registration successful")
-        # self.clearRegBoxes()
-        # self.REGerrormessage.configure(text="")
-        # self.goSigninPage()
 
 
     def goForgotPage(self):

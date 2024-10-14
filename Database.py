@@ -14,6 +14,7 @@ c.execute("""CREATE TABLE IF NOT EXISTS userdata (
     )""")
 
 c.execute("""CREATE TABLE IF NOT EXISTS usersecretquestions (
+        username text NOT NULL UNIQUE,
         SecQue1 text,
         AnswSQ1 text,
         SecQue2 text,
@@ -35,14 +36,14 @@ def createUser(username, password, first_name, last_name):
     except sqlite3.IntegrityError as e:
         print(f'a constraint failed {e}')
 
-def createUserSQ(SQ1, SQA1, SQ2, SQA2):
+def createUserSQ(username, SQ1, SQA1, SQ2, SQA2):
     try:
-        c.execute(f"INSERT INTO usersecretquestions VALUES ('{SQ1}','{SQA1}','{SQ2}','{SQA2}')")
+        c.execute(f"INSERT INTO usersecretquestions VALUES ('{username}','{SQ1}','{SQA1}','{SQ2}','{SQA2}')")
     except sqlite3.IntegrityError as e:
         print(f'a constraint failed {e}')
 
-def getData():
-    c.execute("SELECT * FROM userdata")
+def getData(table):
+    c.execute(f"SELECT * FROM {table}")
     return c.fetchall()
 
 def finDB():
@@ -59,4 +60,6 @@ def list_to_string(lst):
 def string_to_list(string):
     return json.loads(string)
 
+
 #deleteTable("userdata")
+#deleteTable("usersecretquestions")

@@ -7,7 +7,7 @@ from argon2 import PasswordHasher
 
 import Database
 
-data = Database.getData()
+data = Database.getData("userdata")
 Database.startDB()
 
 customtkinter.set_appearance_mode("dark")
@@ -16,6 +16,11 @@ customtkinter.set_default_color_theme("dark-blue")
 class SignIn(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+
+        self.dropSIbutcol = "#016344"
+        self.dropSIbuthovcol = "#013625"
+        self.dropSIfgcolor = "#288265"
+
         self.title("Tippa")
         self.geometry("1140x570")
         self.resizable(width=False, height=False)
@@ -44,8 +49,8 @@ class SignIn(customtkinter.CTk):
 
         self.initSigninPage()
         self.initRegisterPage()
-        self.initForgotPage()
         self.initSQPage()
+        self.initForgotPage()
 
         self.goSigninPage()
 
@@ -182,7 +187,8 @@ class SignIn(customtkinter.CTk):
 
         self.SQ1l.grid(column=1, row=3, padx=400, pady=(5, 10))
 
-        self.combo1 = CTkOptionMenu(self.SQframe, values=self.secretQuestions, width=370, command=self.changeSecretQuestion1)
+        self.combo1 = CTkOptionMenu(self.SQframe, values=self.secretQuestions, width=370, command=self.changeSecretQuestion1
+                                    , button_color=self.dropSIbutcol, fg_color=self.dropSIfgcolor, button_hover_color=self.dropSIbuthovcol)
         self.combo1.grid(column=1, row=4)
 
         self.entry1 = CTkEntry(self.SQframe, width=250, placeholder_text="Answer")
@@ -194,7 +200,8 @@ class SignIn(customtkinter.CTk):
 
         self.SQ2l.grid(column=1, row=6, padx=400, pady=(10, 10))
 
-        self.combo2 = CTkOptionMenu(self.SQframe, values=self.secretQuestions, width=370, command=self.changeSecretQuestion2)
+        self.combo2 = CTkOptionMenu(self.SQframe, values=self.secretQuestions, width=370, command=self.changeSecretQuestion2
+                                    , button_color=self.dropSIbutcol, fg_color=self.dropSIfgcolor, button_hover_color=self.dropSIbuthovcol)
         self.combo2.grid(column=1, row=7, pady=(0, 10))
 
         self.entry2 = CTkEntry(self.SQframe, width=250, placeholder_text="Answer")
@@ -227,14 +234,82 @@ class SignIn(customtkinter.CTk):
                                  border_color="#09d8eb", bg_color="#292e2e", border_width=2)
         self.forframe.grid(column=0, row=0, padx=20, pady=20)
 
-        self.titlefor = CTkLabel(self.forframe,
-                                 text="Tippa",
-                                 text_color="White",
-                                 font=("Copperplate Gothic Bold", 60))
-        self.titlefor.grid(column=1, row=1, padx=400, pady=(30, 60))
+        self.FtitleSQ = CTkLabel(self.forframe,
+                                text="Tippa",
+                                text_color="White",
+                                font=("Copperplate Gothic Bold", 60))
+        self.FtitleSQ.grid(column=1, row=1, padx=430, pady=(30, 5))
 
-        self.backbuttonfor = CTkButton(self.forframe, text='Back', command=self.goSigninPage)
-        self.backbuttonfor.grid(column=1, row=2)
+        self.FSQerrormessage = CTkLabel(self.forframe, text="error", text_color="red")
+        self.FSQerrormessage.grid(column=1, row=2)
+
+        self.FSQ1l = CTkLabel(self.forframe,
+                             text="Question 1: ",
+                             text_color="White")
+
+        self.FSQ1l.grid(column=1, row=3, padx=400, pady=(5, 10))
+
+        self.Fcombo1 = CTkOptionMenu(self.forframe, values=self.secretQuestions, width=370,
+                                    command=self.changeSecretQuestion1, button_color=self.dropSIbutcol, fg_color=self.dropSIfgcolor, button_hover_color=self.dropSIbuthovcol)
+        self.Fcombo1.grid(column=1, row=4)
+
+        self.Fentry1 = CTkEntry(self.forframe, width=250, placeholder_text="Answer")
+        self.Fentry1.grid(column=1, row=5, pady=(10, 0))
+
+        self.FSQ2l = CTkLabel(self.forframe,
+                             text="Question 2: ",
+                             text_color="White")
+
+        self.FSQ2l.grid(column=1, row=6, padx=400, pady=(10, 10))
+
+        self.Fcombo2 = CTkOptionMenu(self.forframe, values=self.secretQuestions, width=370,
+                                    command=self.changeSecretQuestion2, button_color=self.dropSIbutcol, fg_color=self.dropSIfgcolor, button_hover_color=self.dropSIbuthovcol)
+        self.Fcombo2.grid(column=1, row=7, pady=(0, 10))
+
+        self.Fentry2 = CTkEntry(self.forframe, width=250, placeholder_text="Answer")
+        self.Fentry2.grid(column=1, row=8, pady=(0, 30))
+
+        self.Fbackbuttonreg = CTkButton(self.forframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
+        self.Fbackbuttonreg.grid(column=1, row=9, pady=(0, 55), padx=(0, 160))
+
+        self.Fbuttonreg = CTkButton(self.forframe, text='Submit', command=self.attemptRecoverAccount, fg_color="#009e99")
+        self.Fbuttonreg.grid(column=1, row=9, pady=(0, 55), padx=(160, 0))
+
+    def goForgotPage(self):
+        if self.userentry.get() == "":
+            self.SIerrormessage.configure(text="Please enter Username")
+            return
+        else:
+            if self.userentry.get() in self.usernames:
+
+                self.showFrame(self.forframe)
+                self.userSignedIn = self.userentry.get()
+                SQdata = Database.getData("usersecretquestions")
+                for row in SQdata:
+                    if row[0] == self.userSignedIn:
+                        self.question1 = row[1]
+                        self.question2 = row[3]
+
+                        self.answer1 = row[2]
+                        self.answer2 = row[4]
+                        break
+
+                self.Fcombo1.set(self.question1)
+                self.Fcombo1.configure(state="disabled")
+                self.Fcombo2.set(self.question2)
+                self.Fcombo2.configure(state="disabled")
+
+            else:
+                self.SIerrormessage.configure(text="Enter enter Username")
+
+    def attemptRecoverAccount(self):
+        ph = PasswordHasher()
+        if (ph.verify(self.answer1, self.Fentry1.get())) and (ph.verify(self.answer2, self.Fentry2.get())) == True:
+            print("meow")
+        else:
+            print("bad data")
+
+
 
 
     def goSigninPage(self):
@@ -246,7 +321,7 @@ class SignIn(customtkinter.CTk):
 
     def getUsernames(self):
         global data
-        data = Database.getData()
+        data = Database.getData("userdata")
 
         self.usernames.clear()
         print(data)
@@ -256,6 +331,7 @@ class SignIn(customtkinter.CTk):
         print(self.usernames)
 
     def AttempSignin(self):
+        ph = PasswordHasher()
         if self.passwordentry.get() == "" and self.userentry.get() == "":
             self.SIerrormessage.configure(text="Enter your details or register below")
         elif self.passwordentry.get() == "":
@@ -264,10 +340,11 @@ class SignIn(customtkinter.CTk):
             self.SIerrormessage.configure(text="Please enter your Username")
 
         for i in data:
-            if i[0] == self.userentry.get() and i[1] == self.passwordentry.get():
+            hashedpassword = i[1]
+            if i[0] == self.userentry.get() and ph.verify(hashedpassword, self.passwordentry.get()) == True:
                 self.current_user_username = self.userentry.get()
                 #Log in
-                print("Yippee")
+                print(f"Yippee {self.userentry.get()}")
             else:
                 print("bad data")
 
@@ -299,13 +376,13 @@ class SignIn(customtkinter.CTk):
             secqueans1 = ph.hash(self.entry1.get())
 
             if secque2 != secque1:
-
                 hashedpass = ph.hash(self.password)
 
-
                 Database.createUser(self.username, hashedpass, self.fname, self.lname)
-                Database.createUserSQ(secque1, secqueans1, secque2, secqueans2)
+                Database.createUserSQ(self.username, secque1, secqueans1, secque2, secqueans2)
+
                 Database.commitDB()
+
                 print("Registration successful")
 
                 self.clearRegBoxes()
@@ -341,19 +418,9 @@ class SignIn(customtkinter.CTk):
         self.lname = " ".join(name_parts[1:])
         self.goSQPage()
 
-
-    def goForgotPage(self):
-        if self.userentry.get() == "":
-            self.SIerrormessage.configure(text="Please enter Username")
-            return
-        else:
-            if self.userentry.get() in self.usernames:
-                self.showFrame(self.forframe)
-            else:
-                self.SIerrormessage.configure(text="Enter enter Username")
-
     def goSQPage(self):
         self.showFrame(self.SQframe)
+        return
 
 app = SignIn()
 app.mainloop()

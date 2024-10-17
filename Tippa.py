@@ -51,11 +51,12 @@ class SignIn(customtkinter.CTk):
         self.initRegisterPage()
         self.initSQPage()
         self.initForgotPage()
+        self.initChangePassPage()
 
         self.goSigninPage()
 
     def showFrame(self, frame):
-        for f in [self.loginframe, self.regframe, self.forframe, self.SQframe]:
+        for f in [self.loginframe, self.regframe, self.forframe, self.SQframe, self.redpassframe]:
             f.grid_remove()
         frame.grid(column=0,row=0, padx=(50), pady=(50), sticky='nsew')
 
@@ -207,7 +208,6 @@ class SignIn(customtkinter.CTk):
         self.entry2 = CTkEntry(self.SQframe, width=250, placeholder_text="Answer")
         self.entry2.grid(column=1, row=8,pady=(0, 30))
 
-
         self.backbuttonreg = CTkButton(self.SQframe, text='Back', command=self.goRegisterPage, fg_color="#8a0000")
         self.backbuttonreg.grid(column=1, row=9, pady=(0, 55), padx=(0, 160))
 
@@ -306,11 +306,51 @@ class SignIn(customtkinter.CTk):
         ph = PasswordHasher()
         if (ph.verify(self.answer1, self.Fentry1.get())) and (ph.verify(self.answer2, self.Fentry2.get())) == True:
             print("meow")
+            self.goChangePassPage()
         else:
             print("bad data")
 
+    def initChangePassPage(self):
+        self.redpassframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
+                                 border_color="#09d8eb", bg_color="#292e2e", border_width=2)
+        self.redpassframe.grid(column=0, row=0, padx=20, pady=20)
 
+        self.titlereg = CTkLabel(self.redpassframe,
+                                 text="Tippa",
+                                 text_color="White",
+                                 font=("Copperplate Gothic Bold", 60))
 
+        self.titlereg.grid(column=1, row=1, padx=400, pady=(30, 10))
+
+        self.REGerrormessage = CTkLabel(self.redpassframe, text="", text_color="red")
+        self.REGerrormessage.grid(column=1, row=2)
+
+        self.redpasswordentry = CTkEntry(self.redpassframe, show="*",
+                                         placeholder_text="Password",
+                                         width=240,
+                                         height=36,
+                                         border_width=2,
+                                         corner_radius=10, )
+
+        self.redpasswordentry.grid(column=1, row=5, padx=400, pady=(10, 10))
+
+        self.redpasswordentry2 = CTkEntry(self.redpassframe, show="*",
+                                          placeholder_text="Repeat Password",
+                                          width=240,
+                                          height=36,
+                                          border_width=2,
+                                          corner_radius=10, )
+
+        self.redpasswordentry2.grid(column=1, row=6, padx=400, pady=(10, 30))
+
+        self.redbackbuttonreg = CTkButton(self.redpassframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
+        self.redbackbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(0, 160))
+
+        self.redbuttonreg = CTkButton(self.redpassframe, text='Change Password', fg_color="#009e99")
+        self.redbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(160, 0))
+
+    def goChangePassPage(self):
+        self.showFrame(self.redpassframe)
 
     def goSigninPage(self):
         self.showFrame(self.loginframe)

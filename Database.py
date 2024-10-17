@@ -42,6 +42,12 @@ def createUserSQ(username, SQ1, SQA1, SQ2, SQA2):
     except sqlite3.IntegrityError as e:
         print(f'a constraint failed {e}')
 
+def changePassword(newPassword, oldPassword):
+    try:
+        c.execute(f"""UPDATE userdata SET password = '{newPassword}' WHERE password = '{oldPassword}' """)
+    except sqlite3.IntegrityError as e:
+        print(f'a constraint failed {e}')
+
 def getData(table):
     c.execute(f"SELECT * FROM {table}")
     return c.fetchall()

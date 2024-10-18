@@ -60,12 +60,5 @@ def finDB():
 def commitDB():
     conn.commit()
 
-def list_to_string(lst):
-    return json.dumps(lst)
-
-def string_to_list(string):
-    return json.loads(string)
-
-
 #deleteTable("userdata")
 #deleteTable("usersecretquestions")

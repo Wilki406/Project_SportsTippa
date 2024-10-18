@@ -272,7 +272,7 @@ class SignIn(customtkinter.CTk):
         self.Fbackbuttonreg = CTkButton(self.forframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
         self.Fbackbuttonreg.grid(column=1, row=9, pady=(0, 55), padx=(0, 160))
 
-        self.Fbuttonreg = CTkButton(self.forframe, text='Submit', command=self.attemptRecoverAccount, fg_color="#009e99")
+        self.Fbuttonreg = CTkButton(self.forframe, text='Submit', command=self.goChangePassPage, fg_color="#009e99")
         self.Fbuttonreg.grid(column=1, row=9, pady=(0, 55), padx=(160, 0))
 
     def goForgotPage(self):
@@ -302,14 +302,6 @@ class SignIn(customtkinter.CTk):
             else:
                 self.SIerrormessage.configure(text="Enter enter Username")
 
-    def attemptRecoverAccount(self):
-        ph = PasswordHasher()
-        if (ph.verify(self.answer1, self.Fentry1.get())) and (ph.verify(self.answer2, self.Fentry2.get())) == True:
-            print("meow")
-            self.goChangePassPage()
-        else:
-            print("bad data")
-
     def initChangePassPage(self):
         self.redpassframe = CTkFrame(self, width=1560, height=760, corner_radius=10, fg_color="#404747",
                                  border_color="#09d8eb", bg_color="#292e2e", border_width=2)
@@ -322,8 +314,8 @@ class SignIn(customtkinter.CTk):
 
         self.titlereg.grid(column=1, row=1, padx=400, pady=(30, 10))
 
-        self.REGerrormessage = CTkLabel(self.redpassframe, text="", text_color="red")
-        self.REGerrormessage.grid(column=1, row=2)
+        self.REDerrormessage = CTkLabel(self.redpassframe, text="", text_color="red")
+        self.REDerrormessage.grid(column=1, row=2)
 
         self.redpasswordentry = CTkEntry(self.redpassframe, show="*",
                                          placeholder_text="Password",
@@ -346,11 +338,33 @@ class SignIn(customtkinter.CTk):
         self.redbackbuttonreg = CTkButton(self.redpassframe, text='Back', command=self.goSigninPage, fg_color="#8a0000")
         self.redbackbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(0, 160))
 
-        self.redbuttonreg = CTkButton(self.redpassframe, text='Change Password', fg_color="#009e99")
-        self.redbuttonreg.grid(column=1, row=7, pady=(0, 55), padx=(160, 0))
+        self.redbuttonchange = CTkButton(self.redpassframe, text='Change Password',command=self.attemptRecoverAccount, fg_color="#009e99")
+        self.redbuttonchange.grid(column=1, row=7, pady=(0, 55), padx=(160, 0))
+
+    def attemptRecoverAccount(self):
+        if self.redpasswordentry.get() == self.redpasswordentry2.get():
+
+            if len(self.redpasswordentry.get()) <= 20:
+
+                if len(self.redpasswordentry.get()) and len(self.redpasswordentry2.get()) >= 8:
+                    Database.changePassword(self.redpasswordentry.get(), self.redpasswordentry2.get())
+                    self.goSigninPage()
+
+
+                else:
+                    self.REDerrormessage.configure(text="Passwords must be atleast 8 characters")
+            else:
+                self.REDerrormessage.configure(text="Password must be less than 21 characters")
+        else:
+            self.REDerrormessage.configure(text="Passwords do not match")
+
 
     def goChangePassPage(self):
-        self.showFrame(self.redpassframe)
+        ph = PasswordHasher()
+        if (ph.verify(self.answer1, self.Fentry1.get())) and (ph.verify(self.answer2, self.Fentry2.get())) == True:
+            print("success go change password page")
+            self.showFrame(self.redpassframe)
+
 
     def goSigninPage(self):
         self.showFrame(self.loginframe)

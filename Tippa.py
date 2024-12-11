@@ -7,6 +7,10 @@ from argon2 import PasswordHasher
 
 import Database
 
+
+#### THERE IS A BUG WHEN U CHANGE PASSWORD. ANNOYING
+
+
 data = Database.getData("userdata")
 Database.startDB()
 
@@ -318,7 +322,7 @@ class SignIn(customtkinter.CTk):
         self.REDerrormessage.grid(column=1, row=2)
 
         self.redpasswordentry = CTkEntry(self.redpassframe, show="*",
-                                         placeholder_text="Password",
+                                         placeholder_text="New Password",
                                          width=240,
                                          height=36,
                                          border_width=2,
@@ -327,7 +331,7 @@ class SignIn(customtkinter.CTk):
         self.redpasswordentry.grid(column=1, row=5, padx=400, pady=(10, 10))
 
         self.redpasswordentry2 = CTkEntry(self.redpassframe, show="*",
-                                          placeholder_text="Repeat Password",
+                                          placeholder_text="Repeat New Password",
                                           width=240,
                                           height=36,
                                           border_width=2,
@@ -347,9 +351,11 @@ class SignIn(customtkinter.CTk):
             if len(self.redpasswordentry.get()) <= 20:
 
                 if len(self.redpasswordentry.get()) and len(self.redpasswordentry2.get()) >= 8:
-                    Database.changePassword(self.redpasswordentry.get(), self.redpasswordentry2.get())
-                    self.goSigninPage()
 
+                    ph = PasswordHasher()
+                    hashedpass = ph.hash(self.redpasswordentry.get())
+                    Database.changePassword(self.userentry.get(), hashedpass)
+                    self.goSigninPage()
 
                 else:
                     self.REDerrormessage.configure(text="Passwords must be atleast 8 characters")
@@ -360,11 +366,13 @@ class SignIn(customtkinter.CTk):
 
 
     def goChangePassPage(self):
-        ph = PasswordHasher()
-        if (ph.verify(self.answer1, self.Fentry1.get())) and (ph.verify(self.answer2, self.Fentry2.get())) == True:
-            print("success go change password page")
-            self.showFrame(self.redpassframe)
-
+        if self.Fentry2 or self.Fentry1 != "":
+            ph = PasswordHasher()
+            if (ph.verify(self.answer1, self.Fentry1.get())) and (ph.verify(self.answer2, self.Fentry2.get())) == True:
+                print("success go change password page")
+                self.showFrame(self.redpassframe)
+        else:
+            print("enter shit")
 
     def goSigninPage(self):
         self.showFrame(self.loginframe)

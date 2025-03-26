@@ -5,8 +5,6 @@ A Sports betting application with real sports data.
 - Hashing
 - Encryption
 - Database
-- 
-- 
 - actual app stuff with NRL and F1, Webscraping or 
 
 
